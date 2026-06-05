@@ -9,7 +9,7 @@ from openpyxl.chart import PieChart, Reference
 def generate_audit_report(input_csv: str, output_excel: str):
     """
     Advanced converter that turns a QA Audit CSV into an executive Excel report
-    complete with KPI cards, auto-filters, frozen panes, and custom charts.
+    complete with KPI cards, auto-filters, frozen panes, and charts.
     """
     if not os.path.exists(input_csv):
         print(f"Error: The file '{input_csv}' was not found.")
@@ -28,7 +28,7 @@ def generate_audit_report(input_csv: str, output_excel: str):
     for r in dataframe_to_rows(df, index=False, header=True):
         ws_data.append(r)
 
-    # Styles & Themes
+    # Styles & Themes (Professional Corporate Palette)
     header_fill = PatternFill(start_color="1F4E78", end_color="1F4E78", fill_type="solid")
     header_font = Font(name="Arial", size=11, color="FFFFFF", bold=True)
     thin_side = Side(style='thin', color='D9D9D9')
@@ -49,22 +49,18 @@ def generate_audit_report(input_csv: str, output_excel: str):
     for col, width in column_widths.items():
         ws_data.column_dimensions[col].width = width
 
-    # ==========================================
-    # Custom Colors Based on User Request
-    # ==========================================
+    # Conditional Formatting Mapping for AI Decision
     colors = {
-        "NEW_DAMAGE": "000000",     # أسود
-        "DISCARD": "808080",        # رمادي
-        "ERROR": "FF0000",          # أحمر
-        "MANUAL_REVIEW": "0070C0"   # أزرق (يدل على الحيرة / المراجعة)
+        "NEW_DAMAGE": "E2F0D9",     # Pastel Green
+        "DISCARD": "FFF2CC",        # Pastel Yellow
+        "ERROR": "FCE4D6",          # Pastel Red
+        "MANUAL_REVIEW": "DDEBF7"    # Pastel Blue
     }
-    
-    # جعلت الخط أبيض لجميع الحالات ليتناسب مع الخلفيات الغامقة
     text_colors = {
-        "NEW_DAMAGE": "FFFFFF",     # أبيض
-        "DISCARD": "FFFFFF",        # أبيض
-        "ERROR": "FFFFFF",          # أبيض
-        "MANUAL_REVIEW": "FFFFFF"   # أبيض
+        "NEW_DAMAGE": "385723",
+        "DISCARD": "7F6000",
+        "ERROR": "C00000",
+        "MANUAL_REVIEW": "1F4E78"
     }
 
     # Apply conditional styling and cell alignments
@@ -104,13 +100,16 @@ def generate_audit_report(input_csv: str, output_excel: str):
 
     # Function to create formatted KPI blocks
     def create_kpi_card(ws, start_col, label, value, bg_color, text_color):
+        # Merge cells for the card
         c1, c2 = start_col, chr(ord(start_col) + 1)
         ws.merge_cells(f"{c1}4:{c2}4")
         ws.merge_cells(f"{c1}5:{c2}5")
         
+        # Set Labels and Values
         ws[f"{c1}4"] = label
         ws[f"{c1}5"] = value
         
+        # Style Cards
         card_fill = PatternFill(start_color=bg_color, end_color=bg_color, fill_type="solid")
         lbl_font = Font(name="Arial", size=10, color=text_color, bold=True)
         val_font = Font(name="Arial", size=20, color=text_color, bold=True)
@@ -125,8 +124,8 @@ def generate_audit_report(input_csv: str, output_excel: str):
 
     # Build 3 KPI Cards
     create_kpi_card(ws_summary, "A", "TOTAL AUDITED", total_records, "1F4E78", "FFFFFF")
-    create_kpi_card(ws_summary, "D", "AI ERRORS", total_errors, "FF0000", "FFFFFF")
-    create_kpi_card(ws_summary, "G", "GDPR PRIVACY DISCARDS", gdpr_discards, "808080", "FFFFFF")
+    create_kpi_card(ws_summary, "D", "AI ERRORS", total_errors, "FCE4D6", "C00000")
+    create_kpi_card(ws_summary, "G", "GDPR PRIVACY DISCARDS", gdpr_discards, "FFF2CC", "7F6000")
 
     # Statistical Table Section
     if "AI Decision" in df.columns:
@@ -134,18 +133,20 @@ def generate_audit_report(input_csv: str, output_excel: str):
         ws_summary["A8"].font = Font(name="Arial", size=14, bold=True, color="1F4E78")
         
         counts = df["AI Decision"].value_counts()
-        ws_summary.append([]) 
-        ws_summary.append(["AI Decision", "Count"]) 
+        ws_summary.append([]) # Row 9 (Empty spacing)
+        ws_summary.append(["AI Decision", "Count"]) # Row 10 (Table Header)
         
         for decision, count in counts.items():
             ws_summary.append([decision, count])
 
+        # Style Breakdown Table Header
         for cell in ws_summary[10]:
             if cell.column_letter in ["A", "B"]:
                 cell.fill = header_fill
                 cell.font = header_font
                 cell.alignment = Alignment(horizontal="center")
             
+        # Style Breakdown Table Rows
         start_row = 11
         end_row = start_row + len(counts) - 1
         for row in ws_summary.iter_rows(min_row=start_row, max_row=end_row, min_col=1, max_col=2):
@@ -157,7 +158,7 @@ def generate_audit_report(input_csv: str, output_excel: str):
         ws_summary.column_dimensions['A'].width = 22
         ws_summary.column_dimensions['B'].width = 12
 
-        # Add Chart
+        # Add Chart and position it beautifully next to the table
         pie = PieChart()
         labels = Reference(ws_summary, min_col=1, min_row=start_row, max_row=end_row)
         data_ref = Reference(ws_summary, min_col=2, min_row=start_row - 1, max_row=end_row)
@@ -174,6 +175,7 @@ def generate_audit_report(input_csv: str, output_excel: str):
     # Save final polished sheet
     wb.save(output_excel)
     print(f"Success! Executive report generated at: {output_excel}")
+
 
 if __name__ == "__main__":
     INPUT_FILE = "qa_audit_tracker.csv"
