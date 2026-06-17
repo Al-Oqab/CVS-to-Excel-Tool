@@ -199,6 +199,11 @@ def generate_audit_report(input_csv: str, output_excel: str, output_image: str, 
     wb.save(output_excel)
     print(f"Success! Excel report generated at: {output_excel}")
 
+    from excel_to_pdf import excel_to_pdf
+    print("Converting Excel to PDF...")
+    excel_to_pdf(output_excel, output_pdf)
+    print(f"Success! PDF report generated at: {output_pdf}")
+
 
 
 if __name__ == "__main__":

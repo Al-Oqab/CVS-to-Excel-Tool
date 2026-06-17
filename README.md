@@ -1,25 +1,27 @@
 # QA Audit CSV to Excel & PDF Dashboard Converter
 
-Python automation tool that converts raw QA audit logs (CSV) into a formatted Excel dashboard, and optionally exports them to PDF — no Microsoft Excel or LibreOffice required.
+Python automation tool that converts raw QA audit logs (CSV) into a formatted Excel dashboard and PDF report — no Microsoft Excel or LibreOffice required.
 
 ## Project Structure
 
 ```
 .
-├── format_excel.py     # CSV → formatted Excel + PNG chart + PDF report
-├── excel_to_pdf.py     # Excel → PDF (standalone converter)
-├── output/             # Generated files land here
-└── input/              # Place your CSV files here
+├── run.py              # Entry point: CSV → Excel → PDF in one command
+├── format_excel.py     # Core logic: CSV → formatted Excel + PNG chart + PDF
+├── excel_to_pdf.py     # Standalone Excel → PDF converter
+├── input/              # Place your CSV file here
+└── output/             # Generated files land here
 ```
 
 ## Features
 
+- **One command workflow:** `python run.py` handles everything end-to-end.
 - **CSV → Excel:** Converts QA audit CSV logs into a fully formatted `.xlsx` workbook.
 - **Conditional Formatting:** Color-codes rows based on AI Decision values.
 - **Auto-Sizing:** Adjusts column widths and wraps long text fields.
 - **Dashboard Sheet:** Summary KPI cards + pie chart in a separate sheet.
 - **Chart Export:** Saves the decisions chart as a `.png` image.
-- **PDF Export:** Converts any `.xlsx` file to PDF using Python only (no Excel needed).
+- **PDF Export:** Converts the Excel output to PDF automatically (no Excel needed).
 
 ## Prerequisites
 
@@ -35,15 +37,20 @@ python -m pip install -r requirements.txt
 
 ## Usage
 
-### 1. Generate Excel report from CSV
+### Full pipeline (recommended)
+
+Place one CSV file in the `input/` folder, then run:
 
 ```bash
-python format_excel.py
+python run.py
 ```
 
-Output files are saved to `output/`.
+Output files saved to `output/`:
+- `filename.xlsx` — formatted Excel report
+- `filename_chart.png` — decisions pie chart
+- `filename.pdf` — PDF version of the Excel report
 
-### 2. Convert Excel to PDF
+### Convert Excel to PDF only
 
 Convert all `.xlsx` files in `output/` at once:
 
@@ -54,7 +61,13 @@ python excel_to_pdf.py
 Convert a single file:
 
 ```bash
-python excel_to_pdf.py output/master_tracker.xlsx
+python excel_to_pdf.py output/report.xlsx
+```
+
+Custom output path:
+
+```bash
+python excel_to_pdf.py output/report.xlsx -o reports/report.pdf
 ```
 
 Convert a specific folder:
@@ -63,20 +76,14 @@ Convert a specific folder:
 python excel_to_pdf.py -f some_folder/
 ```
 
-Custom output path:
-
-```bash
-python excel_to_pdf.py output/master_tracker.xlsx -o reports/tracker.pdf
-```
-
 ## Dependencies
 
-| Package     | Purpose                        |
-|-------------|--------------------------------|
-| pandas      | CSV reading & data processing  |
-| openpyxl    | Excel file creation/reading    |
-| matplotlib  | Charts & PDF rendering         |
-| fpdf2       | PDF report generation          |
+| Package    | Purpose                       |
+|------------|-------------------------------|
+| pandas     | CSV reading & data processing |
+| openpyxl   | Excel file creation/reading   |
+| matplotlib | Charts & PDF rendering        |
+| fpdf2      | PDF report generation         |
 
 Install all at once:
 
