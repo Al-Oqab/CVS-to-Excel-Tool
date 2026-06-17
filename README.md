@@ -1,55 +1,89 @@
+# QA Audit CSV to Excel & PDF Dashboard Converter
 
-```markdown
-# QA Audit CSV to Excel Dashboard Converter
+Python automation tool that converts raw QA audit logs (CSV) into a formatted Excel dashboard, and optionally exports them to PDF — no Microsoft Excel or LibreOffice required.
 
-This Python automation script takes raw QA audit logs (in CSV format) and converts them into a formatted, presentation-ready Excel file (.xlsx). It features conditional formatting to highlight different AI decisions and automatically generates a summary dashboard with a pie chart.
+## Project Structure
+
+```
+.
+├── format_excel.py     # CSV → formatted Excel + PNG chart + PDF report
+├── excel_to_pdf.py     # Excel → PDF (standalone converter)
+├── output/             # Generated files land here
+└── input/              # Place your CSV files here
+```
 
 ## Features
-* **Automated Data Transfer:** Converts CSV rows into Excel seamlessly.
-* **Conditional Formatting:** Color-codes cells based on specific text values (e.g., Green for `NEW_DAMAGE`, Yellow for `DISCARD`).
-* **Auto-Sizing:** Adjusts column widths and sets text wrapping for long text descriptions.
-* **Dashboard Generation:** Automatically calculates value counts and creates a Pie Chart in a separate sheet for quick presentations.
+
+- **CSV → Excel:** Converts QA audit CSV logs into a fully formatted `.xlsx` workbook.
+- **Conditional Formatting:** Color-codes rows based on AI Decision values.
+- **Auto-Sizing:** Adjusts column widths and wraps long text fields.
+- **Dashboard Sheet:** Summary KPI cards + pie chart in a separate sheet.
+- **Chart Export:** Saves the decisions chart as a `.png` image.
+- **PDF Export:** Converts any `.xlsx` file to PDF using Python only (no Excel needed).
 
 ## Prerequisites
 
-Make sure you have Python 3.x installed on your system. 
+- Python 3.10+
 
 ## Installation
 
-1. Clone this repository or download the source code:
-   ```bash
-   git clone https://github.com/YourUsername/QA-Audit-Excel-Tool.git
-   cd QA-Audit-Excel-Tool
-
-```
-
-2. Install the required Python dependencies using `pip`:
 ```bash
-pip install -r requirements.txt
-
+git clone https://github.com/Al-Oqab/CVS-to-Excel-Tool.git
+cd CVS-to-Excel-Tool
+python -m pip install -r requirements.txt
 ```
-
-
 
 ## Usage
 
-1. Place your data file named `qa_audit_tracker.csv` in the same directory as the script. The script expects the CSV to have a column named `AI Decision` in the 4th position.
-2. Run the script:
-```bash
-python main.py
+### 1. Generate Excel report from CSV
 
+```bash
+python format_excel.py
 ```
 
+Output files are saved to `output/`.
 
-3. A new file named `QA_Audit_Presentation.xlsx` will be generated in the same folder, containing your formatted data and interactive dashboard.
+### 2. Convert Excel to PDF
 
-## Customization
+Convert all `.xlsx` files in `output/` at once:
 
-You can easily customize the tool by editing the `main.py` file:
+```bash
+python excel_to_pdf.py
+```
 
-* **Change Input/Output names:** Modify the `INPUT_FILE` and `OUTPUT_FILE` variables at the bottom of the script.
-* **Change Colors:** Update the hex codes inside the `colors` dictionary to match your specific needs.
+Convert a single file:
+
+```bash
+python excel_to_pdf.py output/master_tracker.xlsx
+```
+
+Convert a specific folder:
+
+```bash
+python excel_to_pdf.py -f some_folder/
+```
+
+Custom output path:
+
+```bash
+python excel_to_pdf.py output/master_tracker.xlsx -o reports/tracker.pdf
+```
+
+## Dependencies
+
+| Package     | Purpose                        |
+|-------------|--------------------------------|
+| pandas      | CSV reading & data processing  |
+| openpyxl    | Excel file creation/reading    |
+| matplotlib  | Charts & PDF rendering         |
+| fpdf2       | PDF report generation          |
+
+Install all at once:
+
+```bash
+python -m pip install pandas openpyxl matplotlib fpdf2
+```
 
 ## License
 
-This project is open-source and available under the MIT License.
+MIT License

@@ -18,6 +18,7 @@ build/
 *.xlsx
 *.csv
 *.png
+*.pdf
 *.log
 *.tmp
 
