@@ -1,0 +1,30 @@
+# Data folders — input/output files don't belong in version control
+input/
+output/
+CSVs done/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Generated files
+*.xlsx
+*.csv
+*.png
+*.log
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
