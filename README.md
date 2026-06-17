@@ -39,13 +39,13 @@ python -m pip install -r requirements.txt
 
 ### Full pipeline (recommended)
 
-Place one CSV file in the `input/` folder, then run:
+Place one or more CSV files in the `input/` folder, then run:
 
 ```bash
 python run.py
 ```
 
-Output files saved to `output/`:
+Each CSV gets its own set of output files in `output/`:
 - `filename.xlsx` — formatted Excel report
 - `filename_chart.png` — decisions pie chart
 - `filename.pdf` — PDF version of the Excel report
